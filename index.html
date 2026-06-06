@@ -8,30 +8,29 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;touch-action:manipulation}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;position:fixed;inset:0;background:#070812;color:#fff;font-family:"Courier New",monospace;overscroll-behavior:none}
 body{display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% -8%,#2b3066 0,#11152f 42%,#060711 82%),linear-gradient(180deg,#15183a,#060711)}
-.game{width:min(100vw,56.25vh);height:min(100vh,177.78vw);aspect-ratio:9/16;max-width:520px;max-height:924px;overflow:hidden;padding:8px;display:grid;grid-template-rows:72px 1fr 50px 140px;gap:7px;background:#0f1124;border:4px solid #03040a;box-shadow:inset 0 0 0 3px #2a315f,0 0 0 4px #000}
-.top{display:grid;grid-template-columns:.72fr 1.28fr;gap:7px}
-.panel{background:#181d3b;border:3px solid #03040a;box-shadow:inset 0 0 0 3px #384783,4px 4px 0 #03040a;border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.label{font-size:10px;font-weight:900;color:#7bd4ff;letter-spacing:1px;text-shadow:2px 2px #07101f}
-.num{font-size:40px;font-weight:900;line-height:.95;color:#ffd957;text-shadow:3px 3px #6e3a00}
-.discard .num{font-size:29px;color:#68ffb6;text-shadow:3px 3px #043d2b}
-.table{min-height:0;background:#101828;border:4px solid #03040a;box-shadow:inset 0 0 0 4px #24385b,4px 4px 0 #03040a;border-radius:4px;padding:10px 7px;overflow:hidden;position:relative}
-.table:before{content:"";position:absolute;inset:7px;border:2px dotted rgba(255,255,255,.08);pointer-events:none}
-.cards{height:100%;overflow:hidden;display:flex;align-content:flex-start;align-items:flex-start;flex-wrap:wrap;padding:10px 0 0 2px}
-.card{width:52px;height:74px;border-radius:4px;background:#e4e7ec;color:#050505;border:3px solid #03040a;box-shadow:3px 3px 0 #03040a;position:relative;font-weight:900;transition:.1s transform,.1s box-shadow,.1s filter;margin-right:-24px;margin-bottom:4px}
-.card:nth-child(8n){margin-right:0}
-.card.red{color:#d1001f}
-.card.sel{transform:translateY(-2px);box-shadow:0 0 0 2px #39f2ff,0 0 10px #39f2ff,3px 3px 0 #03040a;z-index:1;filter:brightness(1.18) saturate(1.25)}
-.card.hint{animation:jump .36s steps(2,end) 2;box-shadow:0 0 0 2px #ffd957,0 0 10px #ffd957,3px 3px 0 #03040a}
-@keyframes jump{0%,100%{transform:translateY(-2px)}50%{transform:translateY(-6px)}}
-.corner{position:absolute;left:3px;top:2px;width:30px;text-align:center;line-height:18px;font-size:22px;font-weight:900;background:none;border:none;padding:0;z-index:2;text-shadow:1px 1px rgba(255,255,255,.45);letter-spacing:-1px;font-family:Arial Black,Impact,"Courier New",monospace}
+.game{width:min(100vw,56.25vh);height:min(100vh,177.78vw);aspect-ratio:9/16;max-width:520px;max-height:924px;overflow:hidden;padding:10px;display:grid;grid-template-rows:122px 1fr 66px 150px;gap:10px;background:#070b16;border:4px solid #1d2448;box-shadow:inset 0 0 0 3px #050711,0 0 0 4px #000;position:relative}
+.top{display:grid;grid-template-columns:.72fr 1.28fr;gap:12px}
+.panel{background:linear-gradient(180deg,#101827,#080d18);border:4px solid #03040a;box-shadow:inset 0 0 0 4px #2b355d,5px 5px 0 #000;border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.label{font-size:15px;font-weight:900;color:#ffd21f;letter-spacing:2px;text-shadow:3px 3px #4a2b00}
+.num{font-size:62px;font-weight:900;line-height:.88;color:#f4f4f4;text-shadow:5px 5px #161c2d,0 0 8px rgba(255,255,255,.18)}
+.discard .num{font-size:58px;color:#f4f4f4;text-shadow:5px 5px #161c2d,0 0 8px rgba(255,255,255,.18)}
+.table{min-height:0;background:#0b1322;border:4px solid #03040a;box-shadow:inset 0 0 0 4px #162640,5px 5px 0 #000;border-radius:4px;padding:28px 18px 18px;overflow:hidden;position:relative}
+.table:before{content:"";position:absolute;inset:13px;border:3px dotted rgba(74,95,134,.5);pointer-events:none}
+.cards{height:100%;overflow:hidden;display:grid;grid-template-columns:repeat(8,1fr);align-content:start;justify-items:start;padding:10px 0 0 0}
+.card{width:64px;height:116px;border-radius:4px;background:linear-gradient(180deg,#f1f3f6,#d8dce3);color:#050505;border:4px solid #03040a;box-shadow:3px 3px 0 #03040a;position:relative;font-weight:900;transition:.1s transform,.1s box-shadow,.1s filter;margin:0 0 10px 0}
+.card.red{color:#d0001d}
+.card.sel{transform:translateY(-3px);box-shadow:0 0 0 3px #39f2ff,0 0 12px #39f2ff,3px 3px 0 #03040a;z-index:1;filter:brightness(1.12) saturate(1.18)}
+.card.hint{animation:jump .36s steps(2,end) 2;box-shadow:0 0 0 3px #ffd957,0 0 12px #ffd957,3px 3px 0 #03040a}
+@keyframes jump{0%,100%{transform:translateY(-3px)}50%{transform:translateY(-8px)}}}
+.corner{position:absolute;left:4px;top:2px;width:42px;text-align:left;line-height:25px;font-size:31px;font-weight:900;background:none;border:none;padding:0;z-index:2;text-shadow:1px 1px rgba(255,255,255,.45);letter-spacing:-2px;font-family:Impact,Arial Black,"Courier New",monospace}
 .corner .rank{display:block;white-space:nowrap;transform-origin:left top}
-.corner .rank.ten{font-size:18px;letter-spacing:-3px;transform:scaleX(.82)}
-.corner span.suit{display:block;font-size:22px;line-height:18px}
-.status{background:#181d3b;border:3px solid #03040a;box-shadow:inset 0 0 0 3px #384783,4px 4px 0 #03040a;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:900;color:#ffd957;text-shadow:3px 3px #6e3a00}
+.corner .rank.ten{font-size:31px;letter-spacing:-7px;transform:none}
+.corner span.suit{display:block;font-size:29px;line-height:23px}
+.status{background:linear-gradient(180deg,#101827,#080d18);border:4px solid #03040a;box-shadow:inset 0 0 0 4px #2b355d,5px 5px 0 #000;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#ffd21f;text-shadow:4px 4px #4a2b00}
 .status.ok{color:#68ffb6;text-shadow:3px 3px #043d2b}
 .status.bad{color:#ff6b79;text-shadow:3px 3px #5c111a}
-.ctrl{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:8px}
-button{border:3px solid #03040a;border-radius:4px;font-size:21px;font-weight:900;font-family:"Courier New",monospace;color:#061018;background:#ffd44f;box-shadow:inset 0 0 0 3px #fff19b,4px 5px 0 #03040a;text-shadow:1px 1px #fff}
+.ctrl{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px}
+button{border:4px solid #03040a;border-radius:5px;font-size:28px;font-weight:900;font-family:"Courier New",monospace;color:#071018;background:#dba51a;box-shadow:inset 0 0 0 5px rgba(255,255,255,.22),5px 6px 0 #000;text-shadow:2px 2px rgba(255,255,255,.8)}
 button:active{transform:translate(3px,3px);box-shadow:inset 0 0 0 3px #fff19b,1px 2px 0 #03040a}
 button:disabled{opacity:.38;filter:grayscale(1)}
 #deal{background:#ffd44f}
@@ -43,12 +42,14 @@ button:disabled{opacity:.38;filter:grayscale(1)}
 .winBox h1{margin:0 0 20px;font-size:36px;color:#ffd957;text-shadow:3px 3px #6e3a00}
 .winBox button{width:100%;height:66px}
 @media(max-height:720px){
-.game{grid-template-rows:60px 1fr 44px 124px;padding:7px;gap:6px}
-.num{font-size:34px}.discard .num{font-size:25px}.label{font-size:9px}
-.table{padding:8px 6px}.cards{padding-top:9px}
-.card{width:45px;height:64px;margin-right:-21px;margin-bottom:3px}
-.corner{width:27px;font-size:19px;line-height:16px}.corner .rank.ten{font-size:16px;letter-spacing:-3px;transform:scaleX(.8)}.corner span.suit{font-size:19px;line-height:16px}
-.status{font-size:20px}button{font-size:19px}
+.game{grid-template-rows:96px 1fr 52px 128px;padding:8px;gap:8px}
+.label{font-size:12px}.num{font-size:50px}.discard .num{font-size:48px}
+.table{padding:20px 14px 14px}.cards{grid-template-columns:repeat(8,1fr);padding-top:8px}
+.card{width:54px;height:92px;margin-bottom:7px}
+.corner{left:3px;top:1px;width:36px;font-size:27px;line-height:22px}
+.corner .rank.ten{font-size:27px;letter-spacing:-6px;transform:none}
+.corner span.suit{font-size:25px;line-height:20px}
+.status{font-size:24px}button{font-size:23px}
 }
 </style>
 </head>
