@@ -1,4 +1,4 @@
-html = r'''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -6,49 +6,47 @@ html = r'''<!DOCTYPE html>
 <title>Chain Ten</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;touch-action:manipulation}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;position:fixed;inset:0;background:#11142a;color:#fff;font-family:"Courier New",monospace;overscroll-behavior:none}
-body{display:flex;align-items:center;justify-content:center;background:
-radial-gradient(circle at 50% 0,#3951a8 0,#1d2350 32%,#0d1028 72%),
-linear-gradient(180deg,#202c68,#0a0d22)}
-.game{width:min(100vw,56.25vh);height:min(100vh,177.78vw);aspect-ratio:9/16;max-width:520px;max-height:924px;overflow:hidden;padding:10px;display:grid;grid-template-rows:82px 1fr 58px 152px;gap:9px;background:#151936;border:4px solid #090b18;box-shadow:inset 0 0 0 3px #303b7a,0 0 0 4px #000}
-.top{display:grid;grid-template-columns:.72fr 1.28fr;gap:9px}
-.panel{background:#222a55;border:3px solid #050611;box-shadow:inset 0 0 0 3px #5364b8,4px 4px 0 #050611;border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.label{font-size:12px;font-weight:900;color:#9ed8ff;letter-spacing:1px;text-shadow:2px 2px #07101f}
-.num{font-size:42px;font-weight:900;line-height:.95;color:#ffe66d;text-shadow:3px 3px #7b3f00}
-.discard .num{font-size:31px;color:#79ffc6;text-shadow:3px 3px #064b34}
-.table{min-height:0;background:#1a3e48;border:4px solid #050611;box-shadow:inset 0 0 0 4px #2c7a78,4px 4px 0 #050611;border-radius:5px;padding:13px 8px;overflow:hidden;position:relative}
-.table:before{content:"";position:absolute;inset:8px;border:2px dashed rgba(168,255,235,.18);pointer-events:none}
-.cards{position:relative;height:100%;overflow:hidden;display:flex;align-content:flex-start;align-items:flex-start;flex-wrap:wrap;padding:18px 0 0 2px}
-.card{width:58px;height:80px;border-radius:3px;background:#f4e6c8;color:#151515;border:3px solid #050611;box-shadow:3px 3px 0 #050611;position:relative;font-weight:900;transition:.1s transform,.1s box-shadow,.1s outline;margin-right:-18px;margin-bottom:9px}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;position:fixed;inset:0;background:#070812;color:#fff;font-family:"Courier New",monospace;overscroll-behavior:none}
+body{display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% -8%,#2b3066 0,#11152f 42%,#060711 82%),linear-gradient(180deg,#15183a,#060711)}
+.game{width:min(100vw,56.25vh);height:min(100vh,177.78vw);aspect-ratio:9/16;max-width:520px;max-height:924px;overflow:hidden;padding:8px;display:grid;grid-template-rows:72px 1fr 50px 140px;gap:7px;background:#0f1124;border:4px solid #03040a;box-shadow:inset 0 0 0 3px #2a315f,0 0 0 4px #000}
+.top{display:grid;grid-template-columns:.72fr 1.28fr;gap:7px}
+.panel{background:#181d3b;border:3px solid #03040a;box-shadow:inset 0 0 0 3px #384783,4px 4px 0 #03040a;border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.label{font-size:10px;font-weight:900;color:#7bd4ff;letter-spacing:1px;text-shadow:2px 2px #07101f}
+.num{font-size:40px;font-weight:900;line-height:.95;color:#ffd957;text-shadow:3px 3px #6e3a00}
+.discard .num{font-size:29px;color:#68ffb6;text-shadow:3px 3px #043d2b}
+.table{min-height:0;background:#101828;border:4px solid #03040a;box-shadow:inset 0 0 0 4px #24385b,4px 4px 0 #03040a;border-radius:4px;padding:10px 7px;overflow:hidden;position:relative}
+.table:before{content:"";position:absolute;inset:7px;border:2px dotted rgba(255,255,255,.08);pointer-events:none}
+.cards{height:100%;overflow:hidden;display:flex;align-content:flex-start;align-items:flex-start;flex-wrap:wrap;padding:12px 0 0 2px}
+.card{width:52px;height:74px;border-radius:4px;background:#e4e7ec;color:#050505;border:3px solid #03040a;box-shadow:3px 3px 0 #03040a;position:relative;font-weight:900;transition:.1s transform,.1s box-shadow,.1s outline,.1s filter;margin-right:-24px;margin-bottom:8px}
 .card:nth-child(8n){margin-right:0}
-.card.red{color:#c52626}
-.card.sel{transform:translateY(-9px);outline:3px solid #71f7ff;box-shadow:0 0 0 3px #0b7592,3px 3px 0 #050611;z-index:0}
-.card.hint{animation:jump .42s steps(2,end) 2;outline:3px solid #ffe66d}
-@keyframes jump{0%,100%{transform:translateY(-9px)}50%{transform:translateY(-18px)}}
-.corner{position:absolute;left:3px;top:3px;width:23px;text-align:center;line-height:12px;font-size:12px;background:#fff6df;border:2px solid #050611;padding:1px 0;z-index:2}
-.corner span{display:block;font-size:12px}
-.mid{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:25px}
-.status{background:#222a55;border:3px solid #050611;box-shadow:inset 0 0 0 3px #5364b8,4px 4px 0 #050611;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#ffe66d;text-shadow:3px 3px #7b3f00}
-.status.ok{color:#79ffc6;text-shadow:3px 3px #064b34}
-.status.bad{color:#ff7e7e;text-shadow:3px 3px #621919}
-.ctrl{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:10px}
-button{border:3px solid #050611;border-radius:4px;font-size:23px;font-weight:900;font-family:"Courier New",monospace;color:#07111f;background:#ffd44f;box-shadow:inset 0 0 0 3px #fff19b,4px 5px 0 #050611;text-shadow:1px 1px #fff}
-button:active{transform:translate(3px,3px);box-shadow:inset 0 0 0 3px #fff19b,1px 2px 0 #050611}
+.card.red{color:#d1001f}
+.card.sel{transform:translateY(-5px);outline:3px solid #39f2ff;box-shadow:0 0 0 3px #08717e,3px 3px 0 #03040a;z-index:0;filter:brightness(1.16) saturate(1.22)}
+.card.hint{animation:jump .38s steps(2,end) 2;outline:3px solid #ffd957}
+@keyframes jump{0%,100%{transform:translateY(-5px)}50%{transform:translateY(-11px)}}
+.corner{position:absolute;left:4px;top:2px;width:auto;text-align:left;line-height:20px;font-size:23px;font-weight:900;background:none;border:none;padding:0;z-index:2;text-shadow:1px 1px rgba(255,255,255,.45)}
+.corner span{display:block;font-size:22px;line-height:18px}
+.status{background:#181d3b;border:3px solid #03040a;box-shadow:inset 0 0 0 3px #384783,4px 4px 0 #03040a;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:900;color:#ffd957;text-shadow:3px 3px #6e3a00}
+.status.ok{color:#68ffb6;text-shadow:3px 3px #043d2b}
+.status.bad{color:#ff6b79;text-shadow:3px 3px #5c111a}
+.ctrl{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:8px}
+button{border:3px solid #03040a;border-radius:4px;font-size:21px;font-weight:900;font-family:"Courier New",monospace;color:#061018;background:#ffd44f;box-shadow:inset 0 0 0 3px #fff19b,4px 5px 0 #03040a;text-shadow:1px 1px #fff}
+button:active{transform:translate(3px,3px);box-shadow:inset 0 0 0 3px #fff19b,1px 2px 0 #03040a}
 button:disabled{opacity:.38;filter:grayscale(1)}
-#hint{background:#69dfff;box-shadow:inset 0 0 0 3px #bff6ff,4px 5px 0 #050611}
 #deal{background:#ffd44f}
-#undo{background:#ff9c57;color:#fff;text-shadow:2px 2px #73320a;box-shadow:inset 0 0 0 3px #ffd0a8,4px 5px 0 #050611}
-#drop{background:#6dff9d;box-shadow:inset 0 0 0 3px #b8ffd0,4px 5px 0 #050611}
-.win{position:absolute;inset:0;background:rgba(3,5,15,.86);display:none;align-items:center;justify-content:center;z-index:9}
-.winBox{width:82%;background:#222a55;border:4px solid #050611;box-shadow:inset 0 0 0 4px #5364b8,5px 6px 0 #050611;border-radius:5px;text-align:center;padding:24px}
-.winBox h1{margin:0 0 20px;font-size:36px;color:#ffe66d;text-shadow:3px 3px #7b3f00}
-.winBox button{width:100%;height:70px}
+#hint{background:#52dfff;box-shadow:inset 0 0 0 3px #bff6ff,4px 5px 0 #03040a}
+#undo{background:#ff8a47;color:#fff;text-shadow:2px 2px #73320a;box-shadow:inset 0 0 0 3px #ffc49d,4px 5px 0 #03040a}
+#drop{background:#5cff90;box-shadow:inset 0 0 0 3px #b8ffd0,4px 5px 0 #03040a}
+.win{position:absolute;inset:0;background:rgba(3,5,15,.88);display:none;align-items:center;justify-content:center;z-index:9}
+.winBox{width:82%;background:#181d3b;border:4px solid #03040a;box-shadow:inset 0 0 0 4px #384783,5px 6px 0 #03040a;border-radius:4px;text-align:center;padding:24px}
+.winBox h1{margin:0 0 20px;font-size:36px;color:#ffd957;text-shadow:3px 3px #6e3a00}
+.winBox button{width:100%;height:66px}
 @media(max-height:720px){
-.game{grid-template-rows:66px 1fr 48px 132px;padding:7px;gap:7px}
-.num{font-size:35px}.discard .num{font-size:27px}.label{font-size:10px}
-.table{padding:10px 7px}.cards{padding-top:12px}
-.card{width:50px;height:70px;margin-right:-15px;margin-bottom:7px}.mid{font-size:21px}.corner{width:20px;font-size:11px;line-height:11px}.corner span{font-size:11px}
-.status{font-size:23px}button{font-size:20px}
+.game{grid-template-rows:60px 1fr 44px 124px;padding:7px;gap:6px}
+.num{font-size:34px}.discard .num{font-size:25px}.label{font-size:9px}
+.table{padding:8px 6px}.cards{padding-top:9px}
+.card{width:45px;height:64px;margin-right:-21px;margin-bottom:6px}
+.corner{font-size:20px;line-height:17px}.corner span{font-size:19px;line-height:16px}
+.status{font-size:20px}button{font-size:19px}
 }
 </style>
 </head>
@@ -61,8 +59,8 @@ button:disabled{opacity:.38;filter:grayscale(1)}
   <div class="table"><div class="cards" id="cards"></div></div>
   <div class="status" id="status">READY</div>
   <div class="ctrl">
-    <button id="hint">HINT</button>
     <button id="deal">DEAL</button>
+    <button id="hint">HINT</button>
     <button id="undo" disabled>UNDO</button>
     <button id="drop" disabled>DROP</button>
   </div>
@@ -72,42 +70,39 @@ button:disabled{opacity:.38;filter:grayscale(1)}
 document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
 document.addEventListener("gesturestart",e=>e.preventDefault());
 const $=id=>document.getElementById(id),suits=[["♠",0],["♥",1],["♦",1],["♣",0]],ranks=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
-let deck=[],line=[],dead=[],sel=[],his=[],hinted=[],ctx;
+let deck=[],line=[],dead=[],sel=[],his=[],hinted=[],ctx,bgm=false,bpm=92,step=0,timer;
 function val(r){return r=="A"?1:["10","J","Q","K"].includes(r)?10:+r}
-function make(){let a=[];for(let s of suits)for(let r of ranks)a.push({r,s:s[0],red:s[1],v:val(r),id:Date.now()+Math.random()});for(let i=a.length-1;i;i--){let j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function make(){let a=[];for(let s of suits)for(let r of ranks)a.push({r,s:s[0],red:s[1],v:val(r)});for(let i=a.length-1;i;i--){let j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
 function au(){ctx||(ctx=new(window.AudioContext||window.webkitAudioContext));ctx.state=="suspended"&&ctx.resume();return ctx}
-function beep(f,d=.07,t="sine",g=.04,dl=0){try{let c=au(),o=c.createOscillator(),x=c.createGain();o.type=t;o.frequency.setValueAtTime(f,c.currentTime+dl);x.gain.setValueAtTime(.001,c.currentTime+dl);x.gain.linearRampToValueAtTime(g,c.currentTime+dl+.01);x.gain.exponentialRampToValueAtTime(.0001,c.currentTime+dl+d);o.connect(x);x.connect(c.destination);o.start(c.currentTime+dl);o.stop(c.currentTime+dl+d+.02)}catch(e){}}
-function s(n){if(n==1){beep(520);beep(780,.08,"square",.018,.03)}if(n==2)beep(260,.07,"square",.025);if(n==3){beep(520,.06,"square",.025);beep(680,.07,"square",.025,.06);beep(880,.1,"square",.022,.12)}if(n==4){beep(170,.1,"square",.025);beep(130,.12,"square",.02,.08)}if(n==5){beep(620,.06,"square",.022);beep(420,.1,"square",.022,.06)}if(n==6){beep(600,.06,"square",.024);beep(760,.08,"square",.024,.07)}}
+function tone(f,d=.07,type="square",g=.035,dl=0){try{let c=au(),o=c.createOscillator(),x=c.createGain(),p=c.createStereoPanner();o.type=type;o.frequency.setValueAtTime(f,c.currentTime+dl);x.gain.setValueAtTime(.001,c.currentTime+dl);x.gain.linearRampToValueAtTime(g,c.currentTime+dl+.01);x.gain.exponentialRampToValueAtTime(.0001,c.currentTime+dl+d);p.pan.value=(Math.random()-.5)*.25;o.connect(x);x.connect(p);p.connect(c.destination);o.start(c.currentTime+dl);o.stop(c.currentTime+dl+d+.03)}catch(e){}}
+function noise(d=.05,g=.03,dl=0,lp=1600){try{let c=au(),b=c.createBuffer(1,c.sampleRate*d,c.sampleRate),a=b.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=(Math.random()*2-1)*(1-i/a.length);let s=c.createBufferSource(),x=c.createGain(),f=c.createBiquadFilter();s.buffer=b;f.type="lowpass";f.frequency.value=lp;x.gain.value=g;s.connect(f);f.connect(x);x.connect(c.destination);s.start(c.currentTime+dl)}catch(e){}}
+function s(n){if(n==1){tone(740,.05,"triangle",.028);tone(988,.05,"sine",.02,.04)}if(n==2){noise(.035,.025,0,2200);tone(330,.08,"triangle",.025,.02)}if(n==3){tone(659,.06,"sine",.035);tone(831,.06,"sine",.035,.06);tone(1046,.1,"triangle",.032,.12);noise(.06,.018,.02,3200)}if(n==4){tone(160,.1,"sawtooth",.028);tone(120,.12,"sawtooth",.024,.08)}if(n==5){tone(700,.05,"triangle",.025);tone(440,.09,"triangle",.025,.06)}if(n==6){tone(880,.05,"sine",.026);tone(1174,.08,"triangle",.022,.06)}}
+function startBgm(){if(bgm)return;bgm=true;let interval=60000/bpm/2;timer=setInterval(playStep,interval);playStep()}
+function playStep(){let st=step%32;if(st%8==0){tone(55,.11,"sine",.05);noise(.045,.05,0,900)}if(st==6||st==14||st==22||st==30)noise(.05,.034,0,1800);if(st%2==1)noise(.025,.014,0,5200);if([2,10,18,26].includes(st))tone(110,.08,"sine",.035);if([0,3,8,11,16,19,24,27].includes(st))tone([392,466,523,587][Math.floor(st/8)]||392,.045,"triangle",.014);step++}
 function save(){his.push({deck:deck.map(o=>({...o})),line:line.map(o=>({...o})),dead:dead.map(o=>({...o})),sel:[...sel]});if(his.length>80)his.shift()}
-function combos(){let n=line.length,a=[];if(n>=3){a.push([n-3,n-2,n-1],[n-2,n-1,0],[n-1,0,1],[0,1,2])}return a.filter(c=>new Set(c).size==3&&c.every(i=>i>=0&&i<n))}
+function combos(){let n=line.length,a=[];if(n>=3)a.push([n-3,n-2,n-1],[n-2,n-1,0],[n-1,0,1],[0,1,2]);return a.filter(c=>new Set(c).size==3&&c.every(i=>i>=0&&i<n))}
 function same(a,b){return a.length==b.length&&[...a].sort((x,y)=>x-y).every((v,i)=>v==[...b].sort((x,y)=>x-y)[i])}
 function allowed(){return combos().some(c=>same(c,sel))}
 function sum(){return sel.map(i=>line[i]).filter(Boolean).reduce((a,c)=>a+c.v,0)}
 function valid(c){let x=c.reduce((a,i)=>a+line[i].v,0);return x==10||x==20||x==30}
 function ok(){return sel.length==3&&allowed()&&valid(sel)}
 function findMove(){return combos().find(valid)||null}
-function deal(){if(!deck.length)return s(4);save();line.push(deck.pop());sel=[];hinted=[];s(2);render();endCheck()}
-function pick(i){hinted=[];let p=sel.indexOf(i);if(p>-1){sel.splice(p,1);s(2)}else{if(sel.length>=3)return set("3","bad"),s(4);sel.push(i);s(1)}sel.sort((a,b)=>a-b);render()}
-function hint(){let m=findMove();if(!m)return set("NONE","bad"),s(4);sel=[...m];hinted=[...m];s(6);render();setTimeout(()=>{hinted=[];render()},900)}
-function drop(){if(!ok())return s(4);save();let out=[];sel.sort((a,b)=>b-a).forEach(i=>out.push(...line.splice(i,1)));dead.push(...out.reverse());sel=[];hinted=[];s(3);render();endCheck()}
-function undo(){let h=his.pop();if(!h)return;deck=h.deck;line=h.line;dead=h.dead;sel=h.sel;hinted=[];$("win").style.display="none";s(5);render()}
+function deal(){startBgm();if(!deck.length)return s(4);save();line.push(deck.pop());sel=[];hinted=[];s(2);render();endCheck()}
+function pick(i){startBgm();hinted=[];let p=sel.indexOf(i);if(p>-1){sel.splice(p,1);s(5)}else{if(sel.length>=3)return set("3","bad"),s(4);sel.push(i);s(1)}sel.sort((a,b)=>a-b);render()}
+function hint(){startBgm();let m=findMove();if(!m)return set("NONE","bad"),s(4);sel=[...m];hinted=[...m];s(6);render();setTimeout(()=>{hinted=[];render()},900)}
+function drop(){startBgm();if(!ok())return s(4);save();let out=[];sel.sort((a,b)=>b-a).forEach(i=>out.push(...line.splice(i,1)));dead.push(...out.reverse());sel=[];hinted=[];s(3);render();endCheck()}
+function undo(){startBgm();let h=his.pop();if(!h)return;deck=h.deck;line=h.line;dead=h.dead;sel=h.sel;hinted=[];$("win").style.display="none";s(5);render()}
 function endCheck(){if(!deck.length&&!line.length)show("CLEAR");else if(!deck.length&&!findMove())show("END")}
 function show(t){$("end").textContent=t;$("win").style.display="flex"}
 function set(t,c){let st=$("status");st.textContent=t;st.className="status "+(c||"")}
 function render(){
 $("deckN").textContent=deck.length;$("discardN").textContent=dead.length;$("undo").disabled=!his.length;
-$("cards").innerHTML=line.map((c,i)=>`<div class="card ${c.red?'red':''} ${sel.includes(i)?'sel':''} ${hinted.includes(i)?'hint':''}" onclick="pick(${i})"><div class="corner">${c.r}<span>${c.s}</span></div><div class="mid">${c.r}</div></div>`).join("");
+$("cards").innerHTML=line.map((c,i)=>`<div class="card ${c.red?'red':''} ${sel.includes(i)?'sel':''} ${hinted.includes(i)?'hint':''}" onclick="pick(${i})"><div class="corner">${c.r}<span>${c.s}</span></div></div>`).join("");
 $("drop").disabled=!ok();let x=sum();
-if(!sel.length)set("READY");
-else if(ok())set(x,"ok");
-else if(sel.length==3)set(allowed()?x:"INVALID","bad");
-else set(`${sel.length}/3 ${x}`);
+if(!sel.length)set("READY");else if(ok())set(x,"ok");else if(sel.length==3)set(allowed()?x:"INVALID","bad");else set(`${sel.length}/3 ${x}`);
 }
-function reset(){deck=make();line=[];dead=[];sel=[];his=[];hinted=[];$("win").style.display="none";render()}
-$("deal").onclick=deal;$("hint").onclick=hint;$("drop").onclick=drop;$("undo").onclick=undo;reset();
+function reset(){startBgm();deck=make();line=[];dead=[];sel=[];his=[];hinted=[];$("win").style.display="none";render()}
+$("deal").onclick=deal;$("hint").onclick=hint;$("drop").onclick=drop;$("undo").onclick=undo;deck=make();render();
 </script>
 </body>
-</html>'''
-path='/mnt/data/chain_ten_pixel_gba.html'
-with open(path,'w',encoding='utf-8') as f:f.write(html)
-path
+</html>
