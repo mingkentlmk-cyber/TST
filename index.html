@@ -14,7 +14,7 @@ linear-gradient(180deg,#111a36,#050813)}
 .game{
   width:min(100vw,56.25vh);height:min(100svh,177.78vw);aspect-ratio:9/16;
   max-width:520px;max-height:924px;overflow:hidden;position:relative;
-  padding:10px;display:grid;grid-template-rows:112px 1fr 60px 150px;gap:10px;
+  padding:10px;display:grid;grid-template-rows:124px 1fr 60px 150px;gap:10px;
   background:linear-gradient(180deg,#0d1428,#060914);
   border:4px solid #02040a;
   box-shadow:inset 0 0 0 3px #23305a,inset 0 0 40px rgba(84,121,255,.12),0 0 0 4px #000
@@ -96,7 +96,7 @@ button:disabled{opacity:.42;filter:grayscale(1)}
 #hint{background:linear-gradient(180deg,#65e8ff,#1cb0d7);box-shadow:inset 0 0 0 5px rgba(255,255,255,.28),inset 0 -12px 20px rgba(0,0,0,.12),5px 6px 0 #000}
 #undo{background:linear-gradient(180deg,#ff9c55,#e76528);color:#fff;text-shadow:3px 3px #73320a}
 #drop{background:linear-gradient(180deg,#63ff94,#20bf5e)}
-.win{position:absolute;inset:0;background:rgba(3,5,15,.88);display:none;align-items:center;justify-content:center;z-index:9}
+.win{display:none}
 .winBox{width:82%;background:#111a2d;border:4px solid #02040a;box-shadow:inset 0 0 0 4px #2f3d69,5px 6px 0 #000;border-radius:5px;text-align:center;padding:24px}
 .winBox h1{margin:0 0 20px;font-size:36px;color:#ffd739;text-shadow:4px 4px #4a2b00}
 .winBox button{width:100%;height:66px}
@@ -117,7 +117,12 @@ button:disabled{opacity:.42;filter:grayscale(1)}
 <div class="game">
   <div class="top">
     <div class="panel discard"><div class="label">DISCARD</div><div class="num" id="discardN">0</div></div>
-    <div class="panel"><div class="label">DECK</div><div class="num" id="deckN">52</div></div>
+    <div class="panel">
+<div style="position:absolute;top:8px;right:8px;display:flex;gap:6px;z-index:5">
+<button id="bgmToggle" style="width:34px;height:28px;font-size:12px;padding:0">♫</button>
+<button id="sfxToggle" style="width:34px;height:28px;font-size:12px;padding:0">♪</button>
+</div>
+<div class="label">DECK</div><div class="num" id="deckN">52</div></div>
   </div>
   <div class="table"><div class="cards" id="cards"></div></div>
   <div class="status" id="status">READY</div>
@@ -133,13 +138,13 @@ button:disabled{opacity:.42;filter:grayscale(1)}
 document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
 document.addEventListener("gesturestart",e=>e.preventDefault());
 const $=id=>document.getElementById(id),suits=[["♠",0],["♥",1],["♦",1],["♣",0]],ranks=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
-let deck=[],line=[],dead=[],sel=[],his=[],hinted=[],ctx,bgm=false,bpm=92,step=0,timer;let autoHint=false,hintTimer=null;
+let deck=[],line=[],dead=[],sel=[],his=[],hinted=[],ctx,bgm=false,bpm=92,step=0,timer;let autoHint=false,hintTimer=null,autoPlay=false,dropHoldTimer=null,bgmEnabled=true,sfxEnabled=true;
 function val(r){return r=="A"?1:["10","J","Q","K"].includes(r)?10:+r}
 function make(){let a=[];for(let s of suits)for(let r of ranks)a.push({r,s:s[0],red:s[1],v:val(r)});for(let i=a.length-1;i;i--){let j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
 function au(){ctx||(ctx=new(window.AudioContext||window.webkitAudioContext));ctx.state=="suspended"&&ctx.resume();return ctx}
 function tone(f,d=.07,type="square",g=.035,dl=0){try{let c=au(),o=c.createOscillator(),x=c.createGain(),p=c.createStereoPanner();o.type=type;o.frequency.setValueAtTime(f,c.currentTime+dl);x.gain.setValueAtTime(.001,c.currentTime+dl);x.gain.linearRampToValueAtTime(g,c.currentTime+dl+.01);x.gain.exponentialRampToValueAtTime(.0001,c.currentTime+dl+d);p.pan.value=(Math.random()-.5)*.25;o.connect(x);x.connect(p);p.connect(c.destination);o.start(c.currentTime+dl);o.stop(c.currentTime+dl+d+.03)}catch(e){}}
 function noise(d=.05,g=.03,dl=0,lp=1600){try{let c=au(),b=c.createBuffer(1,c.sampleRate*d,c.sampleRate),a=b.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=(Math.random()*2-1)*(1-i/a.length);let s=c.createBufferSource(),x=c.createGain(),f=c.createBiquadFilter();s.buffer=b;f.type="lowpass";f.frequency.value=lp;x.gain.value=g;s.connect(f);f.connect(x);x.connect(c.destination);s.start(c.currentTime+dl)}catch(e){}}
-function s(n){if(n==1){tone(740,.05,"triangle",.028);tone(988,.05,"sine",.02,.04)}if(n==2){noise(.035,.025,0,2200);tone(330,.08,"triangle",.025,.02)}if(n==3){tone(659,.06,"sine",.035);tone(831,.06,"sine",.035,.06);tone(1046,.1,"triangle",.032,.12);noise(.06,.018,.02,3200)}if(n==4){tone(160,.1,"sawtooth",.028);tone(120,.12,"sawtooth",.024,.08)}if(n==5){tone(700,.05,"triangle",.025);tone(440,.09,"triangle",.025,.06)}if(n==6){tone(880,.05,"sine",.026);tone(1174,.08,"triangle",.022,.06)}}
+function s(n){if(!sfxEnabled)return;if(n==1){tone(740,.05,"triangle",.028);tone(988,.05,"sine",.02,.04)}if(n==2){noise(.035,.025,0,2200);tone(330,.08,"triangle",.025,.02)}if(n==3){tone(659,.06,"sine",.035);tone(831,.06,"sine",.035,.06);tone(1046,.1,"triangle",.032,.12);noise(.06,.018,.02,3200)}if(n==4){tone(160,.1,"sawtooth",.028);tone(120,.12,"sawtooth",.024,.08)}if(n==5){tone(700,.05,"triangle",.025);tone(440,.09,"triangle",.025,.06)}if(n==6){tone(880,.05,"sine",.026);tone(1174,.08,"triangle",.022,.06)}}
 function startBgm(){if(bgm)return;bgm=true;let interval=60000/bpm/2;timer=setInterval(playStep,interval);playStep()}
 function playStep(){let st=step%32;if(st%8==0){tone(55,.11,"sine",.05);noise(.045,.05,0,900)}if(st==6||st==14||st==22||st==30)noise(.05,.034,0,1800);if(st%2==1)noise(.025,.014,0,5200);if([2,10,18,26].includes(st))tone(110,.08,"sine",.035);if([0,3,8,11,16,19,24,27].includes(st))tone([392,466,523,587][Math.floor(st/8)]||392,.045,"triangle",.014);step++}
 function save(){his.push({deck:deck.map(o=>({...o})),line:line.map(o=>({...o})),dead:dead.map(o=>({...o})),sel:[...sel]});if(his.length>80)his.shift()}
@@ -159,7 +164,12 @@ function hint(){startBgm();let m=findMove();if(!m)return set("NONE","bad"),s(4);
 function drop(){startBgm();if(!ok())return s(4);save();let out=[];sel.sort((a,b)=>b-a).forEach(i=>out.push(...line.splice(i,1)));dead.push(...out.reverse());sel=[];hinted=[];s(3);render();endCheck()}
 function undo(){startBgm();let h=his.pop();if(!h)return;deck=h.deck;line=h.line;dead=h.dead;sel=h.sel;hinted=[];$("win").style.display="none";s(5);render()}
 function endCheck(){if(!deck.length&&!line.length)show("CLEAR");else if(!deck.length&&!findMove())show("END")}
-function show(t){$("end").textContent=t;$("win").style.display="flex"}
+function show(t){
+autoPlay=false;
+const b=$("drop");
+if(b){b.textContent="DROP";b.style.boxShadow=""}
+set(t==="CLEAR"?"CLEAR!":"NO MOVES",t==="CLEAR"?"ok":"bad");
+}
 function set(t,c){let st=$("status");st.textContent=t;st.className="status "+(c||"")}
 function render(){
 $("deckN").textContent=deck.length;$("discardN").textContent=dead.length;$("undo").disabled=!his.length;
@@ -184,6 +194,66 @@ s(6);
 },1000);
 }
 function endHintHold(){clearTimeout(hintTimer)}
+
+function runAuto(){
+ if(!autoPlay)return;
+ let move=findMove();
+
+ if(move){
+   sel=[...move];
+   render();
+   setTimeout(()=>{
+     drop();
+     setTimeout(runAuto,180);
+   },120);
+ }else{
+   if(deck.length){
+     if(deck.length===1){
+        autoPlay=false;
+        autoHint=false;
+
+        const d=$("deal");
+        d.textContent="DEAL!";
+        d.style.boxShadow="0 0 18px #ffd739,5px 6px 0 #000";
+
+        const h=$("hint");
+        h.textContent="HINT";
+        h.style.background="linear-gradient(180deg,#65e8ff,#1cb0d7)";
+        h.style.boxShadow="";
+
+        const b=$("drop");
+        b.textContent="DROP";
+        b.style.boxShadow="";
+
+        return;
+     }
+     deal();
+     setTimeout(runAuto,180);
+   }else{
+     autoPlay=false;
+     const b=$("drop");
+     b.textContent="DROP";
+     b.style.boxShadow="";
+   }
+ }
+}
+
+function startDropHold(){
+ dropHoldTimer=setTimeout(()=>{
+   autoPlay=!autoPlay;
+   const b=$("drop");
+   if(autoPlay){
+     b.textContent="AUTO";
+     b.style.boxShadow="0 0 18px #63ff94,5px 6px 0 #000";
+     runAuto();
+   }else{
+     b.textContent="DROP";
+     b.style.boxShadow="";
+   }
+ },1000);
+}
+
+function endDropHold(){clearTimeout(dropHoldTimer)}
 function reset(){startBgm();deck=make();line=[];dead=[];sel=[];his=[];hinted=[];$("win").style.display="none";render()}
 $("deal").onclick=deal;
 $("hint").onclick=()=>{if(!autoHint)hint();};
@@ -192,8 +262,24 @@ $("hint").ontouchstart=startHintHold;
 $("hint").onmouseup=endHintHold;
 $("hint").onmouseleave=endHintHold;
 $("hint").ontouchend=endHintHold;
-$("drop").onclick=drop;
+$("drop").onclick=()=>{if(!autoPlay)drop();};
+$("drop").onmousedown=startDropHold;
+$("drop").ontouchstart=startDropHold;
+$("drop").onmouseup=endDropHold;
+$("drop").onmouseleave=endDropHold;
+$("drop").ontouchend=endDropHold;
 $("undo").onclick=undo;
+
+
+$("bgmToggle").onclick=()=>{
+ bgmEnabled=!bgmEnabled;
+ $("bgmToggle").style.opacity=bgmEnabled?1:.5;
+ if(!bgmEnabled && timer){clearInterval(timer);timer=null;bgm=false;}
+};
+$("sfxToggle").onclick=()=>{
+ sfxEnabled=!sfxEnabled;
+ $("sfxToggle").style.opacity=sfxEnabled?1:.5;
+};
 deck=make();render();
 </script>
 </body>
