@@ -167,11 +167,11 @@ function findMove(){
  let pick=(len,val)=>all.find(c=>c.length===len&&c.reduce((s,i)=>s+line[i].v,0)===val);
  return pick(3,30)||pick(3,20)||pick(3,10)||pick(2,20)||pick(2,10)||null;
 }
-function deal(){startBgm();if(!deck.length)return s(4);save();line.push(deck.pop());sel=[];hinted=[];s(2);render();if(autoHint)setTimeout(hint,150);endCheck()}
-function pick(i){startBgm();hinted=[];let p=sel.indexOf(i);if(p>-1){sel.splice(p,1);s(5)}else{if(sel.length>=3)return set("3","bad"),s(4);sel.push(i);s(1)}sel.sort((a,b)=>a-b);render()}
-function hint(){startBgm();let m=findMove();if(!m)return set("NONE","bad"),s(4);sel=[...m];hinted=[...m];s(6);render();setTimeout(()=>{hinted=[];render()},900)}
-function drop(){startBgm();if(!ok())return s(4);save();let out=[];sel.sort((a,b)=>b-a).forEach(i=>out.push(...line.splice(i,1)));dead.push(...out.reverse());sel=[];hinted=[];s(3);render();endCheck()}
-function undo(){startBgm();let h=his.pop();if(!h)return;deck=h.deck;line=h.line;dead=h.dead;sel=h.sel;hinted=[];$("win").style.display="none";s(5);render()}
+function deal(){if(gameEnded)return;startBgm();if(!deck.length)return s(4);save();line.push(deck.pop());sel=[];hinted=[];s(2);render();if(autoHint)setTimeout(hint,150);endCheck()}
+function pick(i){if(gameEnded)return;startBgm();hinted=[];let p=sel.indexOf(i);if(p>-1){sel.splice(p,1);s(5)}else{if(sel.length>=3)return set("3","bad"),s(4);sel.push(i);s(1)}sel.sort((a,b)=>a-b);render()}
+function hint(){if(gameEnded)return;startBgm();let m=findMove();if(!m)return set("NONE","bad"),s(4);sel=[...m];hinted=[...m];s(6);render();setTimeout(()=>{hinted=[];render()},900)}
+function drop(){if(gameEnded)return;startBgm();if(!ok())return s(4);save();let out=[];sel.sort((a,b)=>b-a).forEach(i=>out.push(...line.splice(i,1)));dead.push(...out.reverse());sel=[];hinted=[];s(3);render();endCheck()}
+function undo(){if(gameEnded)return;startBgm();let h=his.pop();if(!h)return;deck=h.deck;line=h.line;dead=h.dead;sel=h.sel;hinted=[];$("win").style.display="none";s(5);render()}
 function endCheck(){if(!deck.length&&!line.length)show("CLEAR");else if(!deck.length&&!findMove())show("END")}
 
 function startVictoryLoop(){
@@ -241,6 +241,7 @@ if(gameEnded)return;
 if(!sel.length)set("READY");else if(ok())set(x,"ok");else if(sel.length==3)set(allowed()?x:"INVALID","bad");else set(`${sel.length}/3 ${x}`);
 }
 function startHintHold(){
+if(gameEnded)return;
 hintTimer=setTimeout(()=>{
 autoHint=!autoHint;
 const b=$("hint");
@@ -302,6 +303,7 @@ function runAuto(){
 }
 
 function startDropHold(){
+ if(gameEnded)return;
  dropHoldTimer=setTimeout(()=>{
    autoPlay=!autoPlay;
    const b=$("drop");
