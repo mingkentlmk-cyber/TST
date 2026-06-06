@@ -124,12 +124,14 @@ button:disabled{opacity:.42;filter:grayscale(1)}
 </div>
 <div class="label">DECK</div><div class="num" id="deckN">52</div></div>
   </div>
-  <div class="table"><div class="cards" id="cards"></div></div>
+  <div class="table"><div class="cards" id="cards"></div>
+<div id="victoryLayer" style="display:none;position:absolute;inset:14px;z-index:40;align-items:center;justify-content:center">
+<img src="win.gif" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;pointer-events:none;">
+</div></div>
   <div class="status" id="status">READY</div>
-  
-<div id="victoryLayer" style="display:none;position:absolute;inset:0;z-index:40;align-items:center;justify-content:center;flex-direction:column">
+
+<div style="display:none" id="oldVictory"> style="display:none;position:absolute;inset:0;z-index:40;align-items:center;justify-content:center;flex-direction:column">
 <img src="win.gif" style="width:92%;height:92%;object-fit:contain;image-rendering:pixelated;pointer-events:none;">
-<button id="nextGameBtn" style="position:absolute;bottom:85px;width:240px;height:62px;background:linear-gradient(180deg,#ffd85a,#c9900d);font-size:24px;font-weight:900">NEXT GAME ▶</button>
 </div>
 <div class="ctrl">
     <button id="deal">DEAL</button>
@@ -162,7 +164,11 @@ function allowed(){return combos().some(c=>same(c,sel))}
 function sum(){return sel.map(i=>line[i]).filter(Boolean).reduce((a,c)=>a+c.v,0)}
 function valid(c){let x=c.reduce((a,i)=>a+line[i].v,0);return x==10||x==20||x==30}
 function ok(){return (sel.length==2||sel.length==3)&&allowed()&&valid(sel)}
-function findMove(){return combos().find(valid)||null}
+function findMove(){
+ let all=combos().filter(valid);
+ let pick=(len,val)=>all.find(c=>c.length===len&&c.reduce((s,i)=>s+line[i].v,0)===val);
+ return pick(3,30)||pick(3,20)||pick(3,10)||pick(2,20)||pick(2,10)||null;
+}
 function deal(){startBgm();if(!deck.length)return s(4);save();line.push(deck.pop());sel=[];hinted=[];s(2);render();if(autoHint)setTimeout(hint,150);endCheck()}
 function pick(i){startBgm();hinted=[];let p=sel.indexOf(i);if(p>-1){sel.splice(p,1);s(5)}else{if(sel.length>=3)return set("3","bad"),s(4);sel.push(i);s(1)}sel.sort((a,b)=>a-b);render()}
 function hint(){startBgm();let m=findMove();if(!m)return set("NONE","bad"),s(4);sel=[...m];hinted=[...m];s(6);render();setTimeout(()=>{hinted=[];render()},900)}
@@ -178,19 +184,21 @@ if(b){b.textContent="DROP";b.style.boxShadow=""}
 
 const layer=document.getElementById("victoryLayer");
 const gif=layer.querySelector("img");
-const btn=document.getElementById("nextGameBtn");
-
 layer.style.display="flex";
 
 if(t==="CLEAR"){
  gif.style.display="block";
- btn.textContent="NEXT GAME ▶";
- set("CLEAR!","ok");
+ set("NEXT GAME ▶","ok");
 }else{
  gif.style.display="none";
- btn.textContent="TRY AGAIN ▶";
- set("NO MOVES","bad");
+ set("TRY AGAIN ▶","bad");
 }
+
+$("status").onclick=()=>{
+ layer.style.display="none";
+ $("status").onclick=null;
+ reset();
+};
 }
 function set(t,c){let st=$("status");st.textContent=t;st.className="status "+(c||"")}
 function render(){
@@ -276,7 +284,7 @@ function startDropHold(){
 }
 
 function endDropHold(){clearTimeout(dropHoldTimer)}
-function reset(){startBgm();deck=make();line=[];dead=[];sel=[];his=[];hinted=[];$("win").style.display="none";render()}
+function reset(){deck=make();line=[];dead=[];sel=[];his=[];hinted=[];$("win").style.display="none";render()}
 $("deal").onclick=deal;
 $("hint").onclick=()=>{if(!autoHint)hint();};
 $("hint").onmousedown=startHintHold;
@@ -303,10 +311,7 @@ $("sfxToggle").onclick=()=>{
  $("sfxToggle").style.opacity=sfxEnabled?1:.5;
 };
 
-document.getElementById("nextGameBtn").onclick=()=>{
- document.getElementById("victoryLayer").style.display="none";
- reset();
-};
+
 deck=make();render();
 </script>
 </body>
