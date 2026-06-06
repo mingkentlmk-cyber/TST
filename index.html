@@ -124,7 +124,7 @@ button:disabled{opacity:.42;filter:grayscale(1)}
   </div>
   <div class="table"><div class="cards" id="cards"></div>
 <div id="victoryLayer" style="display:none;position:absolute;inset:14px;z-index:40;align-items:center;justify-content:center">
-<img src="win.gif" style="position: absolute; inset: 0px; width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; pointer-events: none; display: none;">
+<img src="win.gif" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;pointer-events:none;">
 </div></div>
   <div class="status " id="status">READY</div>
 
@@ -132,23 +132,23 @@ button:disabled{opacity:.42;filter:grayscale(1)}
 <img src="win.gif" style="width:92%;height:92%;object-fit:contain;image-rendering:pixelated;pointer-events:none;">
 </div>
 <div class="ctrl">
-    <button id="deal" style="">DEAL</button>
-    <button id="hint" style="background: linear-gradient(rgb(101, 232, 255), rgb(28, 176, 215));">HINT</button>
+    <button id="deal">DEAL</button>
+    <button id="hint">HINT</button>
     <button id="undo" disabled="">UNDO</button>
-    <button id="drop" disabled="" style="">DROP</button>
+    <button id="drop" disabled="">DROP</button>
   </div>
-  <div class="win" id="win" style="display: none;"><div class="winBox"><h1 id="end">END</h1><button onclick="reset()">AGAIN</button></div></div>
+  <div class="win" id="win"><div class="winBox"><h1 id="end">END</h1><button onclick="reset()">AGAIN</button></div></div>
 </div>
 <script>
 document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
 document.addEventListener("gesturestart",e=>e.preventDefault());
 const $=id=>document.getElementById(id),suits=[["♠",0],["♥",1],["♦",1],["♣",0]],ranks=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
-let deck=[],line=[],dead=[],sel=[],his=[],hinted=[],ctx,bgm=false,bpm=92,step=0,timer;let autoHint=false,hintTimer=null,autoPlay=false,dropHoldTimer=null,bgmEnabled=true,sfxEnabled=true,gameEnded=false;
+let deck=[],line=[],dead=[],sel=[],his=[],hinted=[],ctx,bgm=false,bpm=92,step=0,timer;let autoHint=false,hintTimer=null,autoPlay=false,dropHoldTimer=null,bgmEnabled=true,sfxEnabled=true,gameEnded=false,victoryTimer=null,victoryStep=0;
 function val(r){return r=="A"?1:["10","J","Q","K"].includes(r)?10:+r}
 function make(){let a=[];for(let s of suits)for(let r of ranks)a.push({r,s:s[0],red:s[1],v:val(r)});for(let i=a.length-1;i;i--){let j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
 function au(){ctx||(ctx=new(window.AudioContext||window.webkitAudioContext));ctx.state=="suspended"&&ctx.resume();return ctx}
-function tone(f,d=.07,type="square",g=.035,dl=0){try{let c=au(),o=c.createOscillator(),x=c.createGain(),p=c.createStereoPanner();o.type=type;o.frequency.setValueAtTime(f,c.currentTime+dl);x.gain.setValueAtTime(.001,c.currentTime+dl);x.gain.linearRampToValueAtTime(g,c.currentTime+dl+.01);x.gain.exponentialRampToValueAtTime(.0001,c.currentTime+dl+d);p.pan.value=(Math.random()-.5)*.25;o.connect(x);x.connect(p);p.connect(c.destination);o.start(c.currentTime+dl);o.stop(c.currentTime+dl+d+.03)}catch(e){}}
-function noise(d=.05,g=.03,dl=0,lp=1600){try{let c=au(),b=c.createBuffer(1,c.sampleRate*d,c.sampleRate),a=b.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=(Math.random()*2-1)*(1-i/a.length);let s=c.createBufferSource(),x=c.createGain(),f=c.createBiquadFilter();s.buffer=b;f.type="lowpass";f.frequency.value=lp;x.gain.value=g;s.connect(f);f.connect(x);x.connect(c.destination);s.start(c.currentTime+dl)}catch(e){}}
+function tone(f,d=.07,type="square",g=.035,dl=0){g=Math.min(g*3,.16);try{let c=au(),o=c.createOscillator(),x=c.createGain(),p=c.createStereoPanner();o.type=type;o.frequency.setValueAtTime(f,c.currentTime+dl);x.gain.setValueAtTime(.001,c.currentTime+dl);x.gain.linearRampToValueAtTime(g,c.currentTime+dl+.01);x.gain.exponentialRampToValueAtTime(.0001,c.currentTime+dl+d);p.pan.value=(Math.random()-.5)*.25;o.connect(x);x.connect(p);p.connect(c.destination);o.start(c.currentTime+dl);o.stop(c.currentTime+dl+d+.03)}catch(e){}}
+function noise(d=.05,g=.03,dl=0,lp=1600){g=Math.min(g*3,.16);try{let c=au(),b=c.createBuffer(1,c.sampleRate*d,c.sampleRate),a=b.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=(Math.random()*2-1)*(1-i/a.length);let s=c.createBufferSource(),x=c.createGain(),f=c.createBiquadFilter();s.buffer=b;f.type="lowpass";f.frequency.value=lp;x.gain.value=g;s.connect(f);f.connect(x);x.connect(c.destination);s.start(c.currentTime+dl)}catch(e){}}
 function s(n){if(!sfxEnabled)return;if(n==1){tone(740,.05,"triangle",.028);tone(988,.05,"sine",.02,.04)}if(n==2){noise(.035,.025,0,2200);tone(330,.08,"triangle",.025,.02)}if(n==3){tone(659,.06,"sine",.035);tone(831,.06,"sine",.035,.06);tone(1046,.1,"triangle",.032,.12);noise(.06,.018,.02,3200)}if(n==4){tone(160,.1,"sawtooth",.028);tone(120,.12,"sawtooth",.024,.08)}if(n==5){tone(700,.05,"triangle",.025);tone(440,.09,"triangle",.025,.06)}if(n==6){tone(880,.05,"sine",.026);tone(1174,.08,"triangle",.022,.06)}}
 function startBgm(){if(!bgmEnabled)return;if(bgm)return;bgm=true;let interval=60000/bpm/2;timer=setInterval(playStep,interval);playStep()}
 function playStep(){if(!bgmEnabled)return;let st=step%32;if(st%8==0){tone(55,.11,"sine",.05);noise(.045,.05,0,900)}if(st==6||st==14||st==22||st==30)noise(.05,.034,0,1800);if(st%2==1)noise(.025,.014,0,5200);if([2,10,18,26].includes(st))tone(110,.08,"sine",.035);if([0,3,8,11,16,19,24,27].includes(st))tone([392,466,523,587][Math.floor(st/8)]||392,.045,"triangle",.014);step++}
@@ -173,6 +173,24 @@ function hint(){startBgm();let m=findMove();if(!m)return set("NONE","bad"),s(4);
 function drop(){startBgm();if(!ok())return s(4);save();let out=[];sel.sort((a,b)=>b-a).forEach(i=>out.push(...line.splice(i,1)));dead.push(...out.reverse());sel=[];hinted=[];s(3);render();endCheck()}
 function undo(){startBgm();let h=his.pop();if(!h)return;deck=h.deck;line=h.line;dead=h.dead;sel=h.sel;hinted=[];$("win").style.display="none";s(5);render()}
 function endCheck(){if(!deck.length&&!line.length)show("CLEAR");else if(!deck.length&&!findMove())show("END")}
+
+function startVictoryLoop(){
+ if(!sfxEnabled)return;
+ stopVictoryLoop();
+ victoryStep=0;
+ victoryTimer=setInterval(()=>{
+   if(!sfxEnabled){stopVictoryLoop();return;}
+   let n=victoryStep%8;
+   if(n===0){tone(523,.12,"triangle",.09);tone(1046,.16,"sine",.07,.03);noise(.08,.05,.02,3600)}
+   if(n===2){tone(659,.12,"triangle",.08);tone(1318,.14,"sine",.06,.03);noise(.07,.045,.02,4200)}
+   if(n===4){tone(784,.12,"triangle",.08);tone(1568,.15,"sine",.06,.03);noise(.08,.05,.02,5200)}
+   if(n===6){tone(1046,.18,"triangle",.09);tone(2093,.2,"sine",.06,.05);noise(.1,.06,.02,6000)}
+   victoryStep++;
+ },420);
+}
+function stopVictoryLoop(){
+ if(victoryTimer){clearInterval(victoryTimer);victoryTimer=null;}
+}
 function show(t){
 gameEnded=true;
 autoPlay=false;
@@ -198,7 +216,9 @@ if(t==="CLEAR"){
  layer.style.display="flex";
  gif.style.display="block";
  set("NEXT GAME ▶","ok");
+ startVictoryLoop();
 }else{
+ stopVictoryLoop();
  layer.style.display="none";
  gif.style.display="none";
  set("TRY AGAIN ▶","bad");
@@ -296,6 +316,7 @@ function startDropHold(){
 
 function endDropHold(){clearTimeout(dropHoldTimer)}
 function reset(){
+stopVictoryLoop();
 gameEnded=false;
 deck=make();line=[];dead=[];sel=[];his=[];hinted=[];
 $("win").style.display="none";
@@ -337,6 +358,8 @@ $("sfxToggle").onclick=(e)=>{
  sfxEnabled=!sfxEnabled;
  localStorage.setItem("ct_sfx",sfxEnabled?"1":"0");
  $("sfxToggle").style.opacity=sfxEnabled?1:.5;
+ if(!sfxEnabled)stopVictoryLoop();
+ else if(gameEnded && $("status").textContent.includes("NEXT GAME"))startVictoryLoop();
 };
 
 
