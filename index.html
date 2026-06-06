@@ -172,13 +172,23 @@ function endCheck(){if(!deck.length&&!line.length)show("CLEAR");else if(!deck.le
 function show(t){
 autoPlay=false;
 autoHint=false;
+
 const b=$("drop");
 if(b){b.textContent="DROP";b.style.boxShadow=""}
 
+const layer=document.getElementById("victoryLayer");
+const gif=layer.querySelector("img");
+const btn=document.getElementById("nextGameBtn");
+
+layer.style.display="flex";
+
 if(t==="CLEAR"){
- document.getElementById("victoryLayer").style.display="flex";
+ gif.style.display="block";
+ btn.textContent="NEXT GAME ▶";
  set("CLEAR!","ok");
 }else{
+ gif.style.display="none";
+ btn.textContent="TRY AGAIN ▶";
  set("NO MOVES","bad");
 }
 }
