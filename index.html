@@ -126,7 +126,12 @@ button:disabled{opacity:.42;filter:grayscale(1)}
   </div>
   <div class="table"><div class="cards" id="cards"></div></div>
   <div class="status" id="status">READY</div>
-  <div class="ctrl">
+  
+<div id="victoryLayer" style="display:none;position:absolute;inset:0;z-index:40;align-items:center;justify-content:center;flex-direction:column">
+<img src="win.gif" style="width:92%;height:92%;object-fit:contain;image-rendering:pixelated;pointer-events:none;">
+<button id="nextGameBtn" style="position:absolute;bottom:85px;width:240px;height:62px;background:linear-gradient(180deg,#ffd85a,#c9900d);font-size:24px;font-weight:900">NEXT GAME ▶</button>
+</div>
+<div class="ctrl">
     <button id="deal">DEAL</button>
     <button id="hint">HINT</button>
     <button id="undo" disabled>UNDO</button>
@@ -166,9 +171,16 @@ function undo(){startBgm();let h=his.pop();if(!h)return;deck=h.deck;line=h.line;
 function endCheck(){if(!deck.length&&!line.length)show("CLEAR");else if(!deck.length&&!findMove())show("END")}
 function show(t){
 autoPlay=false;
+autoHint=false;
 const b=$("drop");
 if(b){b.textContent="DROP";b.style.boxShadow=""}
-set(t==="CLEAR"?"CLEAR!":"NO MOVES",t==="CLEAR"?"ok":"bad");
+
+if(t==="CLEAR"){
+ document.getElementById("victoryLayer").style.display="flex";
+ set("CLEAR!","ok");
+}else{
+ set("NO MOVES","bad");
+}
 }
 function set(t,c){let st=$("status");st.textContent=t;st.className="status "+(c||"")}
 function render(){
@@ -279,6 +291,11 @@ $("bgmToggle").onclick=()=>{
 $("sfxToggle").onclick=()=>{
  sfxEnabled=!sfxEnabled;
  $("sfxToggle").style.opacity=sfxEnabled?1:.5;
+};
+
+document.getElementById("nextGameBtn").onclick=()=>{
+ document.getElementById("victoryLayer").style.display="none";
+ reset();
 };
 deck=make();render();
 </script>
