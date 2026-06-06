@@ -221,7 +221,9 @@ if(t==="CLEAR"){
  stopVictoryLoop();
  layer.style.display="none";
  gif.style.display="none";
- set("TRY AGAIN ▶","bad");
+ const st=$("status");
+ st.textContent="TRY AGAIN ▶";
+ st.className="status bad";
 }
 
 $("status").onclick=()=>{
