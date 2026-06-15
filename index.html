@@ -100,6 +100,16 @@ button:disabled{opacity:.42;filter:grayscale(1)}
 #hint{background:linear-gradient(180deg,#65e8ff,#1cb0d7);box-shadow:inset 0 0 0 5px rgba(255,255,255,.28),inset 0 -12px 20px rgba(0,0,0,.12),5px 6px 0 #000}
 #undo{background:linear-gradient(180deg,#ff9c55,#e76528);color:#fff;text-shadow:3px 3px #73320a}
 #drop{background:linear-gradient(180deg,#63ff94,#20bf5e)}
+#victoryLayer{
+  display:none;position:absolute;inset:0;z-index:40;
+  align-items:center;justify-content:center;pointer-events:none
+}
+#victoryLayer img{
+  width:100%;height:100%;object-fit:contain;
+  image-rendering:pixelated;pointer-events:none
+}
+#nextGameBtn:active{transform:translate(calc(-50% + 3px),3px)}
+
 .win{display:none}
 .winBox{width:82%;background:#111a2d;border:4px solid #02040a;box-shadow:inset 0 0 0 4px #2f3d69,5px 6px 0 #000;border-radius:5px;text-align:center;padding:24px}
 .winBox h1{margin:0 0 20px;font-size:36px;color:#ffd739;text-shadow:4px 4px #4a2b00}
@@ -128,13 +138,15 @@ button:disabled{opacity:.42;filter:grayscale(1)}
 </div>
 <div class="label">DECK</div><div class="num" id="deckN">52</div></div>
   </div>
-  <div class="table"><div class="cards" id="cards"></div></div>
+  <div class="table">
+    <div class="cards" id="cards"></div>
+    <div id="victoryLayer">
+      <img src="win.gif" alt="win">
+    </div>
+  </div>
   <div class="status " id="status">READY</div>
   
-<div id="victoryLayer" style="display:none;position:absolute;inset:0;z-index:40;align-items:center;justify-content:center;flex-direction:column">
-<img src="win.gif" style="width:92%;height:92%;object-fit:contain;image-rendering:pixelated;pointer-events:none;">
-<button id="nextGameBtn" style="position:absolute;bottom:85px;width:240px;height:62px;background:linear-gradient(180deg,#ffd85a,#c9900d);font-size:24px;font-weight:900">NEXT GAME ▶</button>
-</div>
+<button id="nextGameBtn" style="display:none;position:absolute;left:50%;bottom:84px;transform:translateX(-50%);z-index:50;width:240px;height:62px;background:linear-gradient(180deg,#ffd85a,#c9900d);font-size:24px;font-weight:900">NEXT GAME ▶</button>
 <div class="ctrl">
     <button id="deal">DEAL</button>
     <button id="hint">HINT</button>
@@ -171,7 +183,7 @@ function deal(){startBgm();if(!deck.length)return s(4);save();line.push(deck.pop
 function pick(i){startBgm();hinted=[];let p=sel.indexOf(i);if(p>-1){sel.splice(p,1);s(5)}else{if(sel.length>=3)return set("3","bad"),s(4);sel.push(i);s(1)}sel.sort((a,b)=>a-b);render()}
 function hint(){startBgm();let m=findMove();if(!m)return set("NONE","bad"),s(4);sel=[...m];hinted=[...m];s(6);render();setTimeout(()=>{hinted=[];render()},900)}
 function drop(){startBgm();if(!ok())return s(4);save();let out=[];sel.sort((a,b)=>b-a).forEach(i=>out.push(...line.splice(i,1)));dead.push(...out.reverse());sel=[];hinted=[];s(3);render();endCheck()}
-function undo(){startBgm();let h=his.pop();if(!h)return;deck=h.deck;line=h.line;dead=h.dead;sel=h.sel;hinted=[];$("win").style.display="none";s(5);render()}
+function undo(){startBgm();let h=his.pop();if(!h)return;deck=h.deck;line=h.line;dead=h.dead;sel=h.sel;hinted=[];$("win").style.display="none";document.getElementById("victoryLayer").style.display="none";document.getElementById("nextGameBtn").style.display="none";s(5);render()}
 function endCheck(){if(!deck.length&&!line.length)show("CLEAR");else if(!deck.length&&!findMove())show("END")}
 function show(t){
 autoPlay=false;
@@ -184,7 +196,8 @@ const layer=document.getElementById("victoryLayer");
 const gif=layer.querySelector("img");
 const btn=document.getElementById("nextGameBtn");
 
-layer.style.display="flex";
+layer.style.display=t==="CLEAR"?"flex":"none";
+btn.style.display="block";
 
 if(t==="CLEAR"){
  gif.style.display="block";
@@ -280,7 +293,7 @@ function startDropHold(){
 }
 
 function endDropHold(){clearTimeout(dropHoldTimer)}
-function reset(){startBgm();deck=make();line=[];dead=[];sel=[];his=[];hinted=[];$("win").style.display="none";render()}
+function reset(){startBgm();deck=make();line=[];dead=[];sel=[];his=[];hinted=[];$("win").style.display="none";document.getElementById("victoryLayer").style.display="none";document.getElementById("nextGameBtn").style.display="none";render()}
 $("deal").onclick=deal;
 $("hint").onclick=()=>{if(!autoHint)hint();};
 $("hint").onmousedown=startHintHold;
@@ -309,6 +322,7 @@ $("sfxToggle").onclick=()=>{
 
 document.getElementById("nextGameBtn").onclick=()=>{
  document.getElementById("victoryLayer").style.display="none";
+ document.getElementById("nextGameBtn").style.display="none";
  reset();
 };
 deck=make();render();
